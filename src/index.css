@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.hoverEffect {
+    @apply hover:text-blue-500 cursor-pointer;
+}
