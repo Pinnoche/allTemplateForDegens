@@ -11,23 +11,23 @@ export class User {
   @Prop()
   ticker: string;
 
-  // @Prop()
-  // domain_name: string;
+  @Prop()
+  domain_name: string;
 
-  // @Prop()
-  // email: string;
+  @Prop()
+  email: string;
 
-  // @Prop()
-  // x_username: string;
+  @Prop()
+  x_username: string;
 
-  // @Prop()
-  // dicord: string;
+  @Prop()
+  dicord: string;
 
-  // @Prop()
-  // token_address: string;
+  @Prop()
+  token_address: string;
 
-  // @Prop()
-  // telegram: string;
+  @Prop()
+  telegram: string;
 }
 
 export type UserDocument = User & Document;
