@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './schemas/user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
+import { User } from '../auth/schemas/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
@@ -25,14 +16,6 @@ export class UsersController {
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.usersServive.getUser(id);
-  }
-
-  // Create User
-  @Post()
-  async createUser(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<{ token: string }> {
-    return this.usersServive.create(createUserDto);
   }
 
   // Update User
