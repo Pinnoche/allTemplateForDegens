@@ -29,8 +29,10 @@ export class UsersController {
 
   // Create User
   @Post()
-  async createUser(@Body() user: CreateUserDto): Promise<User> {
-    return this.usersServive.create(user);
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<{ token: string }> {
+    return this.usersServive.create(createUserDto);
   }
 
   // Update User

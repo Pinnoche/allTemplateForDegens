@@ -8,12 +8,15 @@ import { User, UserDocument } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
+    private jwtService: JwtService,
   ) {}
 
   async getUsers(): Promise<User[]> {
@@ -31,20 +34,28 @@ export class UsersService {
     return user;
   }
 
-  async create(user: CreateUserDto): Promise<User> {
-    const res = await this.userModel.create(user);
-    return res;
-    // return await res.save();
+  async create(createUserDto: CreateUserDto): Promise<{ token: string }> {
+    const { degen_name, email, password } = createUserDto;
+    const hashPass = await bcrypt.hash(password, 10);
+    const user = await this.userModel.create({
+      degen_name,
+      email,
+      password: hashPass,
+    });
+    const payload = { sub: user._id, username: user.degen_name };
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async updateUser(id: string, user: UpdateUserDto): Promise<User> {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotAcceptableException();
     }
-    const { degen_name, ticker } = user;
+    const { degen_name } = user;
     const res = await this.userModel.findByIdAndUpdate(
       id,
-      { degen_name, ticker },
+      { degen_name },
       { new: true },
     );
     if (!res) {

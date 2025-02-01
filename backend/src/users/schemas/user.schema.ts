@@ -5,29 +5,14 @@ import { Document } from 'mongoose';
   timestamps: true,
 })
 export class User {
-  @Prop()
+  @Prop({ unique: [true, 'You cannot have similar name as another Degen'] })
   degen_name: string;
 
-  @Prop()
-  ticker: string;
-
-  @Prop()
-  domain_name: string;
-
-  @Prop()
+  @Prop({ unique: [true, 'Duplicate Email'] })
   email: string;
 
   @Prop()
-  x_username: string;
-
-  @Prop()
-  dicord: string;
-
-  @Prop()
-  token_address: string;
-
-  @Prop()
-  telegram: string;
+  password: string;
 }
 
 export type UserDocument = User & Document;

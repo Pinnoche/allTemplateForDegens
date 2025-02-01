@@ -1,20 +1,14 @@
-// import { IsEnum, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
-  // @MinLength(5)
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
   degen_name: string;
 
-  ticker: string;
-
-  domain_name: string;
-
+  @IsEmail({}, { message: 'Enter a correct email' })
   email: string;
 
-  x_username: string;
-
-  dicord: string;
-
-  token_address: string;
-
-  telegram: string;
+  @MinLength(6)
+  password: string;
 }

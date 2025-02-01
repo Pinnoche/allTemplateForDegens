@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { DDataModule } from './d-data/d-data.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -23,6 +24,7 @@ import * as Joi from 'joi';
     }),
     UsersModule,
     DDataModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
