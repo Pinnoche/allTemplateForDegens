@@ -1,12 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { User } from '../../auth/schemas/user.schema';
 
 @Schema({
   timestamps: true,
 })
 export class Data {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  userId: MongooseSchema.Types.ObjectId;
   @Prop({ unique: true, required: [true, 'Ticker is required'] })
   ticker: string;
 
@@ -21,6 +20,8 @@ export class Data {
 
   @Prop({ unique: true })
   discord: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  userId: User;
 }
 
 export interface DataDocument extends Data, Document {}

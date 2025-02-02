@@ -1,10 +1,7 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsString } from 'class-validator';
+import { User } from '../../auth/schemas/user.schema';
 
 export class CreateDDatumDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  userId: string;
-
   @IsNotEmpty()
   ticker: string;
 
@@ -22,4 +19,7 @@ export class CreateDDatumDto {
   @IsNotEmpty()
   @IsString()
   discord: string;
+
+  @IsEmpty()
+  userId: User;
 }

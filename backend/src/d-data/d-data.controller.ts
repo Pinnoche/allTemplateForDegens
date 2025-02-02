@@ -6,27 +6,28 @@ import {
   // Patch,
   Param,
   Delete,
+  Req,
   // Request,
 } from '@nestjs/common';
 import { DDataService } from './d-data.service';
 import { CreateDDatumDto } from './dto/create-d-datum.dto';
 // import { UpdateDDatumDto } from './dto/update-d-datum.dto';
 
-@Controller('d-data')
+@Controller('data')
 export class DDataController {
   constructor(private readonly dDataService: DDataService) {}
 
   @Post()
   async create(
     @Body() createDDatumDto: CreateDDatumDto,
-    // @Request() req: any,
+    @Req() req,
   ): Promise<any> {
-    // createDDatumDto.userId = req.user._id;
+    console.log(req.user);
     return this.dDataService.create(createDDatumDto);
   }
 
   @Get()
-  findAll() {
+  getAllData() {
     return this.dDataService.findAll();
   }
 
