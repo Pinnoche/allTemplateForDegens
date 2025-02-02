@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -29,7 +30,7 @@ export class AuthService {
     if (!user) {
       throw new ConflictException('Degen name or Email Already Exist');
     }
-    const payload = { sub: user._id, username: user.degen_name };
+    const payload = { id: user._id, username: user.degen_name };
     return {
       token: await this.jwtService.signAsync(payload),
     };
@@ -38,13 +39,13 @@ export class AuthService {
   async login(email: string, password: string): Promise<{ token: string }> {
     const user = await this.userModel.findOne({ email: email });
     if (!user) {
-      throw new Error('user not found');
+      throw new NotFoundException('user not found');
     }
     const isPassword = bcrypt.compare(password, user.password);
     if (!isPassword) {
       throw new UnauthorizedException('Invalid Degenname or Password');
     }
-    const payload = { sub: user._id, username: user.degen_name };
+    const payload = { id: user._id, username: user.degen_name };
     return {
       token: await this.jwtService.signAsync(payload),
     };

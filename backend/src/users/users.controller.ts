@@ -1,7 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../auth/schemas/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
@@ -14,6 +23,7 @@ export class UsersController {
 
   // Get User by ID
   @Get(':id')
+  @UseGuards(AuthGuard())
   getUserById(@Param('id') id: string) {
     return this.usersServive.getUser(id);
   }
