@@ -1,11 +1,12 @@
 import {
+  BadRequestException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../auth/schemas/user.schema';
-import { Model, Types } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -20,8 +21,9 @@ export class UsersService {
   }
 
   async getUser(id: string): Promise<User> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new NotAcceptableException();
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new BadRequestException();
     }
     const user = await this.userModel.findById(id).exec();
     if (!user) {
@@ -31,7 +33,8 @@ export class UsersService {
   }
 
   async updateUser(id: string, user: UpdateUserDto): Promise<User> {
-    if (!Types.ObjectId.isValid(id)) {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
       throw new NotAcceptableException();
     }
     const { degen_name } = user;
@@ -47,7 +50,8 @@ export class UsersService {
   }
 
   async deleteUser(id: string): Promise<User> {
-    if (!Types.ObjectId.isValid(id)) {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
       throw new NotAcceptableException();
     }
     const user = await this.userModel.findByIdAndDelete(id).exec();

@@ -21,5 +21,5 @@ export class User {
   password: string;
 }
 
-export type UserDocument = User & Document;
+export interface UserDocument extends User, Document {}
 export const UserSchema = SchemaFactory.createForClass(User);
