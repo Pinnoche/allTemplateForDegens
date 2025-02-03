@@ -4,7 +4,7 @@ import { CreateDDatumDto } from './dto/create-d-datum.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Data, DataDocument } from './schemas/d-data.schema';
 import { Model } from 'mongoose';
-import { User } from 'src/auth/schemas/user.schema';
+// import { User } from 'src/auth/schemas/user.schema';
 
 @Injectable()
 export class DDataService {
@@ -15,7 +15,9 @@ export class DDataService {
     return await this.dataModel.create(createDDatumDto);
   }
 
-  async getDatum(): Promise<any> {}
+  async getDatum(): Promise<any> {
+    return await this.dataModel.find().exec();
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} dDatum`;

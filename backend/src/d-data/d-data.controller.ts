@@ -28,7 +28,7 @@ export class DDataController {
 
   @Get()
   getAllData() {
-    return this.dDataService.findAll();
+    return this.dDataService.getDatum();
   }
 
   @Get(':id')
