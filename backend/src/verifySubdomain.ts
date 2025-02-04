@@ -2,33 +2,56 @@ import {
   BadRequestException,
   Injectable,
   NestMiddleware,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
 import { UsersService } from './users/users.service';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Injectable()
 export class verifySubdomain implements NestMiddleware {
   constructor(
     private jwtService: JwtService,
+    private jwtStrategy: JwtStrategy,
     private usersService: UsersService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const subdomain = req.subdomains[0];
-    const reservedSubdomains = ['app', 'admin'];
-    if (!reservedSubdomains.includes(subdomain)) {
-      const publicSubdomain =
+    // default subdomain to app if not found
+    if (!subdomain) {
+      req.subdomains[0] = 'app';
+      return next();
+    }
+    const reserved_subdomains = ['app', 'admin'];
+    if (reserved_subdomains.includes(subdomain)) {
+      try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res
+            .status(401)
+            .json({ message: 'Unathorized: Please login first ' });
+        }
+        const token = authHeader.split(' ')[1];
+        const decoded_token = await this.jwtStrategy.validate({ token });
+        req.user = decoded_token;
+        return next();
+      } catch (error) {
+        throw new UnauthorizedException(
+          'Unauthorized: Invalid or expired token',
+        );
+      }
+    }
+    try {
+      const public_subdomain =
         await this.usersService.getUserBySubdomain(subdomain);
-      if (!publicSubdomain) {
+      if (!public_subdomain) {
         throw new BadRequestException('Page Not Found');
       }
-      return (req.user = subdomain);
-
-      //   return (req.user[user] = 'isAdmin');
+      return next();
+    } catch (error) {
+      return next(error);
     }
-
-    next();
   }
 }
