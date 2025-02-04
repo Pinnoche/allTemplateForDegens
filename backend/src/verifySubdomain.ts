@@ -7,13 +7,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
 import { UsersService } from './users/users.service';
-import { JwtStrategy } from './auth/jwt.strategy';
 
 @Injectable()
 export class verifySubdomain implements NestMiddleware {
   constructor(
     private jwtService: JwtService,
-    private jwtStrategy: JwtStrategy,
     private usersService: UsersService,
   ) {}
 
@@ -26,20 +24,20 @@ export class verifySubdomain implements NestMiddleware {
     }
     const reserved_subdomains = ['app', 'admin'];
     if (reserved_subdomains.includes(subdomain)) {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res
+          .status(401)
+          .json({ message: 'Unathorized: Please login first ' });
+      }
+      const token = authHeader.split(' ')[1];
       try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-          return res
-            .status(401)
-            .json({ message: 'Unathorized: Please login first ' });
-        }
-        const token = authHeader.split(' ')[1];
-        const decoded_token = await this.jwtStrategy.validate({ token });
+        const decoded_token = await this.jwtService.verifyAsync(token);
         req.user = decoded_token;
         return next();
       } catch (error) {
         throw new UnauthorizedException(
-          'Unauthorized: Invalid or expired token',
+          'Unauthorized: Invalid Token or Expired Token',
         );
       }
     }
