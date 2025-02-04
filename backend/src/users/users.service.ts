@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../auth/schemas/user.schema';
+import { User } from '../auth/schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: Model<UserDocument>,
+    private readonly userModel: Model<User>,
   ) {}
 
   async getUsers(): Promise<User[]> {
@@ -30,6 +30,10 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  async getUserBySubdomain(subdomain: string): Promise<User> {
+    return this.userModel.findOne({ degen_name: subdomain });
   }
 
   async updateUser(id: string, user: UpdateUserDto): Promise<User> {

@@ -5,7 +5,7 @@ import { User } from '../../auth/schemas/user.schema';
 @Schema({
   timestamps: true,
 })
-export class Data {
+export class Data extends Document {
   @Prop({ unique: true, required: [true, 'Ticker is required'] })
   ticker: string;
 
@@ -24,5 +24,4 @@ export class Data {
   userId: User;
 }
 
-export interface DataDocument extends Data, Document {}
 export const DataSchema = SchemaFactory.createForClass(Data);

@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema({
   timestamps: true,
 })
-export class User {
+export class User extends Document {
   @Prop({
     unique: [true, 'You cannot have similar name as another Degen Please'],
     required: [true, 'Degen name is required'],
@@ -21,5 +21,4 @@ export class User {
   password: string;
 }
 
-export interface UserDocument extends User, Document {}
 export const UserSchema = SchemaFactory.createForClass(User);

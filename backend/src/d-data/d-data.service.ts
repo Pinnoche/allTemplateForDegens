@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { CreateDDatumDto } from './dto/create-d-datum.dto';
 // import { UpdateDDatumDto } from './dto/update-d-datum.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Data, DataDocument } from './schemas/d-data.schema';
+import { Data } from './schemas/d-data.schema';
 import { Model } from 'mongoose';
-// import { User } from 'src/auth/schemas/user.schema';
+import { User } from 'src/auth/schemas/user.schema';
 
 @Injectable()
 export class DDataService {
   @InjectModel(Data.name)
-  private readonly dataModel: Model<DataDocument>;
+  private readonly dataModel: Model<Data>;
 
-  async create(createDDatumDto: CreateDDatumDto): Promise<any> {
-    return await this.dataModel.create(createDDatumDto);
+  async create(createDDatumDto: CreateDDatumDto, user: User): Promise<any> {
+    const data = Object.assign(createDDatumDto, { userId: user._id });
+    return await this.dataModel.create(data);
   }
 
   async getDatum(): Promise<any> {
@@ -21,6 +22,14 @@ export class DDataService {
 
   findOne(id: number) {
     return `This action returns a #${id} dDatum`;
+  }
+
+  async getDataByUserId(user: User) {
+    const { _id } = user;
+    const data = await this.dataModel.findOne({
+      userId: _id,
+    });
+    return data;
   }
 
   // update(id: number, updateDDatumDto: UpdateDDatumDto) {
