@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DDataModule } from './d-data/d-data.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
@@ -21,9 +21,10 @@ import { DDataController } from './d-data/d-data.controller';
       }),
     }),
     MongooseModule.forRootAsync({
-      useFactory: () => ({
-        uri: process.env.MONGO_URI,
+      useFactory: async (config: ConfigService) => ({
+        uri: config.get<string>('MONGO_URI'),
       }),
+      inject: [ConfigService],
     }),
     UsersModule,
     DDataModule,

@@ -1,27 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDDatumDto } from './dto/create-d-datum.dto';
-// import { UpdateDDatumDto } from './dto/update-d-datum.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Data } from './schemas/d-data.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
+import { UpdateDDatumDto } from './dto/update-d-datum.dto';
 
 @Injectable()
 export class DDataService {
   @InjectModel(Data.name)
   private readonly dataModel: Model<Data>;
 
-  async create(createDDatumDto: CreateDDatumDto, user: User): Promise<any> {
-    const data = Object.assign(createDDatumDto, { userId: user._id });
-    return await this.dataModel.create(data);
+  async create(createDDatumDto: CreateDDatumDto, user: User): Promise<Data> {
+    const existingData = await this.dataModel.findOne({ userId: user._id });
+    if (existingData) {
+      throw new NotAcceptableException('User Data already exist');
+    }
+    const newData = new this.dataModel({
+      ...createDDatumDto,
+      userId: user._id,
+    });
+    return await newData.save();
   }
 
-  async getDatum(): Promise<any> {
-    return await this.dataModel.find().exec();
+  async getDatum(): Promise<Data[]> {
+    const data = await this.dataModel.find().exec();
+    if (!data) {
+      throw new NotFoundException('Data not Available');
+    }
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} dDatum`;
+  async getBySubdomain(subdomain: Data): Promise<Data> {
+    return await this.dataModel.findOne({ degen_name: subdomain });
   }
 
   async getDataByUserId(user: User) {
@@ -32,11 +47,43 @@ export class DDataService {
     return data;
   }
 
-  // update(id: number, updateDDatumDto: UpdateDDatumDto) {
-  //   return `This action updates a #${id} dDatum`;
-  // }
+  async getData(id: string): Promise<Data> {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new NotAcceptableException();
+    }
+    const data = await this.dataModel.findById(id);
+    if (!data) {
+      throw new NotFoundException('Data not Available');
+    }
+    return data;
+  }
 
-  remove(id: number) {
-    return `This action removes a #${id} dDatum`;
+  async update(id: string, updateDDatumDto: UpdateDDatumDto): Promise<Data> {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new NotAcceptableException();
+    }
+    const data = await this.dataModel.findByIdAndUpdate(
+      id,
+      { updateDDatumDto },
+      { new: true },
+    );
+    if (!data) {
+      throw new NotFoundException('Data not available');
+    }
+    return data;
+  }
+
+  async remove(id: string): Promise<any> {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new NotAcceptableException();
+    }
+    const data = await this.dataModel.findByIdAndDelete(id).exec();
+    if (!data) {
+      throw new NotFoundException('User not found');
+    }
+    return { message: 'Data deleted Successfully' };
   }
 }

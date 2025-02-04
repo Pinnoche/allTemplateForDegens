@@ -20,7 +20,10 @@ export class Data extends Document {
 
   @Prop({ unique: true })
   discord: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  })
   userId: User;
 }
 

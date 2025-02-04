@@ -41,6 +41,7 @@ export class verifySubdomain implements NestMiddleware {
       } catch (error) {
         throw new UnauthorizedException(
           'Unauthorized: Invalid Token or Expired Token',
+          error,
         );
       }
     }

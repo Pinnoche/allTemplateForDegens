@@ -8,12 +8,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../auth/schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Data } from '../d-data/schemas/d-data.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+    private readonly dataModel: Model<Data>,
   ) {}
 
   async getUsers(): Promise<User[]> {
@@ -58,6 +60,7 @@ export class UsersService {
     if (!isValidId) {
       throw new NotAcceptableException();
     }
+    await this.dataModel.deleteOne({ userId: id }).exec();
     const user = await this.userModel.findByIdAndDelete(id).exec();
     if (!user) {
       throw new NotFoundException('User not found');
