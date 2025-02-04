@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 import { verifySubdomain } from './verifySubdomain';
+import { UsersController } from './users/users.controller';
+import { DDataController } from './d-data/d-data.controller';
 
 @Module({
   imports: [
@@ -32,6 +34,6 @@ import { verifySubdomain } from './verifySubdomain';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(verifySubdomain).forRoutes('*');
+    consumer.apply(verifySubdomain).forRoutes(UsersController, DDataController);
   }
 }

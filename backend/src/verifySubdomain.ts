@@ -16,14 +16,17 @@ export class verifySubdomain implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const subdomain = req.subdomains[0];
+    const subdomain = req.subdomains[0] || 'app';
+    console.log('Subdomain:', req.subdomains);
     // default subdomain to app if not found
-    if (!subdomain) {
-      req.subdomains[0] = 'app';
-      return next();
-    }
-    const reserved_subdomains = ['app', 'admin'];
+    // if (!subdomain) {
+    //   req.subdomains[0] = 'app';
+    //   console.log(req.subdomains[0]);
+    //   return next();
+    // }
+    const reserved_subdomains = ['app', 'admin', '7e08-102-89-69-203'];
     if (reserved_subdomains.includes(subdomain)) {
+      console.log('Reserved subdomain:', subdomain);
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res
