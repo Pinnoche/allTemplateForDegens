@@ -10,21 +10,28 @@ import { Model } from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import { SignupDto } from './dto/signup.dto';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
+    private roleService: RolesService,
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
   ) {}
 
   async signup(signupDto: SignupDto): Promise<{ token: string }> {
-    const { degen_name, email, password } = signupDto;
+    const { degen_name, email, roleName, password } = signupDto;
+    const role = await this.roleService.getRoleByName(roleName);
+    if (!role) {
+      throw new NotFoundException('Create a Role Schema First and Migrate it');
+    }
     const hashPass = await bcrypt.hash(password, 10);
     const user = await this.userModel.create({
       degen_name,
       email,
+      roleId: role._id,
       password: hashPass,
     });
     if (!user) {

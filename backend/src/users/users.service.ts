@@ -15,6 +15,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+    @InjectModel(Data.name)
     private readonly dataModel: Model<Data>,
   ) {}
 

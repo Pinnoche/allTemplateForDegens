@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEmpty,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import { Role } from 'src/roles/schema/roles.schema';
 
 export class SignupDto {
   @IsNotEmpty()
@@ -13,4 +20,9 @@ export class SignupDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  @IsEmpty()
+  roleId: Role;
+
+  roleName: string;
 }

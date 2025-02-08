@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DDataModule } from './d-data/d-data.module';
+import { RolesModule } from './roles/roles.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
@@ -10,6 +11,7 @@ import * as Joi from 'joi';
 import { verifySubdomain } from './verifySubdomain';
 import { UsersController } from './users/users.controller';
 import { DDataController } from './d-data/d-data.controller';
+import { Reserved_Subdomain } from './reserved-subdomain';
 
 @Module({
   imports: [
@@ -29,9 +31,10 @@ import { DDataController } from './d-data/d-data.controller';
     UsersModule,
     DDataModule,
     AuthModule,
+    RolesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Reserved_Subdomain],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

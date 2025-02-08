@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { User } from '../../auth/schemas/user.schema';
 
 @Schema({
@@ -21,7 +21,7 @@ export class Data extends Document {
   @Prop({ unique: true })
   discord: string;
   @Prop({
-    type: mongoose.Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User',
   })
   userId: User;

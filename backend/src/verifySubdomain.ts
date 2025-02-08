@@ -7,12 +7,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
 import { UsersService } from './users/users.service';
+import { Reserved_Subdomain } from './reserved-subdomain';
 
 @Injectable()
 export class verifySubdomain implements NestMiddleware {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private readonly reserved_subdomain: Reserved_Subdomain,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -24,8 +26,7 @@ export class verifySubdomain implements NestMiddleware {
     //   console.log(req.subdomains[0]);
     //   return next();
     // }
-    const reserved_subdomains = ['app', 'admin', '7e08-102-89-69-203'];
-    if (reserved_subdomains.includes(subdomain)) {
+    if (this.reserved_subdomain.subdomains.includes(subdomain)) {
       console.log('Reserved subdomain:', subdomain);
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -53,7 +54,8 @@ export class verifySubdomain implements NestMiddleware {
       }
       return next();
     } catch (error) {
-      return next(error);
+      console.log('Error:', error);
+      return res.status(500).json({ message: 'Internal Server error' });
     }
   }
 }

@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { JwtStrategy } from './jwt.strategy';
+import { RolesModule } from 'src/roles/roles.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JwtStrategy } from './jwt.strategy';
         },
       }),
     }),
+    RolesModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
