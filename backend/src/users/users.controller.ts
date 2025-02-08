@@ -14,18 +14,18 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersServive: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
   // Get all Users
   @Get()
   async getAllUsers(): Promise<User[]> {
-    return this.usersServive.getUsers();
+    return this.usersService.getUsers();
   }
 
   // Get User by ID
   @Get(':id')
   @UseGuards(AuthGuard())
   getUserById(@Param('id') id: string) {
-    return this.usersServive.getUser(id);
+    return this.usersService.getUser(id);
   }
 
   // Update User
@@ -34,12 +34,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() user: UpdateUserDto,
   ): Promise<User> {
-    return this.usersServive.updateUser(id, user);
+    return this.usersService.updateUser(id, user);
   }
 
   // Delete User
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
-    return this.usersServive.deleteUser(id);
+    return this.usersService.deleteUser(id);
   }
 }

@@ -11,6 +11,7 @@ import { User } from 'src/auth/schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import { SignupDto } from './dto/signup.dto';
 import { RolesService } from 'src/roles/roles.service';
+import { Role } from 'src/roles/schema/roles.schema';
 
 @Injectable()
 export class AuthService {
@@ -22,11 +23,8 @@ export class AuthService {
   ) {}
 
   async signup(signupDto: SignupDto): Promise<{ token: string }> {
-    const { degen_name, email, roleName, password } = signupDto;
-    const role = await this.roleService.getRoleByName(roleName);
-    if (!role) {
-      throw new NotFoundException('Create a Role Schema First and Migrate it');
-    }
+    const { degen_name, email, password } = signupDto;
+    const role = await this.getRole('admin');
     const hashPass = await bcrypt.hash(password, 10);
     const user = await this.userModel.create({
       degen_name,
@@ -37,7 +35,11 @@ export class AuthService {
     if (!user) {
       throw new ConflictException('Degen name or Email Already Exist');
     }
-    const payload = { id: user._id, username: user.degen_name };
+    const payload = {
+      id: user._id,
+      role: role.name,
+      permission: role.permissions,
+    };
     return {
       token: await this.jwtService.signAsync(payload),
     };
@@ -48,11 +50,31 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('user not found');
     }
-    const isPassword = bcrypt.compare(password, user.password);
+    const isPassword = await bcrypt.compare(password, user.password);
     if (!isPassword) {
       throw new UnauthorizedException('Invalid Degenname or Password');
     }
-    const payload = { id: user._id, username: user.degen_name };
+    const role = await this.roleService.getRoleById(user.roleId);
+    return this.generateJwt(user, role);
+  }
+
+  private async getRole(roleName: string) {
+    const role = await this.roleService.getRoleByName(roleName);
+    if (!role) {
+      throw new NotFoundException(`Role ${roleName} does not exist.
+        \n\nCreate a Role Schema First and Migrate it`);
+    }
+    return role;
+  }
+  private async generateJwt(
+    user: User,
+    role: Role,
+  ): Promise<{ token: string }> {
+    const payload = {
+      id: user._id,
+      role: role.name,
+      permission: role.permissions,
+    };
     return {
       token: await this.jwtService.signAsync(payload),
     };

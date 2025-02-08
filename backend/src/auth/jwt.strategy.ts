@@ -1,16 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
     private config: ConfigService,
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -22,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload): Promise<any> {
     const { id } = payload;
 
-    const user = await this.userModel.findById(id);
+    const user = await this.usersService.getUser(id);
 
     if (!user) {
       throw new UnauthorizedException('Please Login to access this feature');

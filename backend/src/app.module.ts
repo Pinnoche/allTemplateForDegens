@@ -12,6 +12,9 @@ import { verifySubdomain } from './verifySubdomain';
 import { UsersController } from './users/users.controller';
 import { DDataController } from './d-data/d-data.controller';
 import { Reserved_Subdomain } from './reserved-subdomain';
+import { SuperadminModule } from './superadmin/superadmin.module';
+import { Role, RoleSchema } from './roles/schema/roles.schema';
+import { RoleFactory } from './roles/roles.factory';
 
 @Module({
   imports: [
@@ -28,13 +31,15 @@ import { Reserved_Subdomain } from './reserved-subdomain';
       }),
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
     UsersModule,
     DDataModule,
     AuthModule,
     RolesModule,
+    SuperadminModule,
   ],
   controllers: [AppController],
-  providers: [AppService, Reserved_Subdomain],
+  providers: [AppService, Reserved_Subdomain, RoleFactory],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
