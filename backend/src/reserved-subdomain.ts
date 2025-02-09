@@ -2,5 +2,5 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class Reserved_Subdomain {
-  subdomains = ['app', 'admin', '0332-197-211-63-0'];
+  subdomains = ['app', 'admin', '1ae4-197-210-70-51'];
 }
