@@ -1,5 +1,5 @@
-import Section1 from "./Section1"
-import Section2 from "./Section2"
+import Section1 from "../../components/Section1"
+import Section2 from "../../components/Section2"
 function Home() {
   return (
     <div className="">
