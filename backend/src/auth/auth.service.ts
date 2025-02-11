@@ -55,6 +55,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid Degenname or Password');
     }
     const role = await this.roleService.getRoleById(user.roleId);
+    if (!role) {
+      throw new NotFoundException('Role Not Found');
+    }
     return this.generateJwt(user, role);
   }
 
@@ -72,7 +75,7 @@ export class AuthService {
   ): Promise<{ token: string }> {
     const payload = {
       id: user._id,
-      role: role.name,
+      // role: role.name,
       permission: role.permissions,
     };
     return {

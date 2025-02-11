@@ -9,7 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 import { verifySubdomain } from './verifySubdomain';
-import { UsersController } from './users/users.controller';
+// import { UsersController } from './users/users.controller';
 import { DDataController } from './d-data/d-data.controller';
 import { Reserved_Subdomain } from './reserved-subdomain';
 import { SuperadminModule } from './superadmin/superadmin.module';
@@ -43,6 +43,6 @@ import { RoleFactory } from './roles/roles.factory';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(verifySubdomain).forRoutes(UsersController, DDataController);
+    consumer.apply(verifySubdomain).forRoutes(DDataController);
   }
 }

@@ -7,3 +7,11 @@
 .hoverEffect {
     @apply hover:text-blue-500 cursor-pointer;
 }
+
+.submitBtn {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md;
+}
+
+.form {
+    @apply container max-w-lg m-auto px-4 sm:px-6 lg:px-8 py-8 rounded-md;
+}
