@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <header className="w-full">
       <nav className="w-full bg-gradient-to-b from-black via-gray-900 to-black text-lg font-bold text-white py-6 px-8 flex items-center justify-between shadow-lg">
-        <h1 className="text-4xl text-shadow-neon tracking-wide">KUMUNDO</h1>
+        <h1 className="text-4xl text-shadow-neon tracking-wide">DEGEN</h1>
 
         <div className="hidden lg:flex flex-row w-1/2 md:w-1/3 items-center justify-between space-x-6">
           <p className="hover:text-purple-500 cursor-pointer transition-all duration-300">
