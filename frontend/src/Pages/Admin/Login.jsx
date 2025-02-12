@@ -14,7 +14,7 @@ function Login() {
   }
   async function handleSubmit() {
     try {
-      const res = await axios.post("/api/auth/login", {
+      const res = await axios.post("/auth/login", {
         email: email,
         password: password,
       });
@@ -29,7 +29,7 @@ function Login() {
     }
   }
   return (
-    // <div className="h-screen mb-28 flex items-center justify-center">
+    <div className="h-screen flex items-center justify-center">
       <div className="form bg-gray-800 text-white">
         {res.data && (
           <span className="text-green-500 text-center block mt-4">
@@ -130,7 +130,7 @@ function Login() {
           </a>
         </p>
       </div>
-    // </div>
+    </div>
   );
 }
 
