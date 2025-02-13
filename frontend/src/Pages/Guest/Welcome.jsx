@@ -1,48 +1,35 @@
 import { useState } from "react";
 function Welcome() {
   const [scaling, setScaling] = useState(false);
-  const projects = [ {
-    name: "Project 1",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
-  },
-  {
-    name: "Project 2",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
-  },
-  {
-    name: "Project 3",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
-  },
-  {
-    name: "Project 4",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
-  },
-  {
-    name: "Project 5",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
-  },
+  const projects = [
+    {
+      name: "Project 1",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
+    },
+    {
+      name: "Project 2",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
+    },
+    {
+      name: "Project 3",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
+    },
+    {
+      name: "Project 4",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
+    },
+    {
+      name: "Project 5",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero et felis elementum, et fermentum odio euismod. Nullam auctor, odio ac scelerisque.",
+    },
   ];
   return (
-    <div className="relative bg-gradient-to-tr from-black via-gray-900 to-gray-800 min-h-screen w-full flex flex-col gap-6 text-white">
-      <nav className="fixed top-0 z-20 backdrop-blur-sm bg-transparent w-full px-10 py-4">
-        <div className="flex justify-between items-center text-white">
-          <div className="font-bold text-2xl animate-pulse">Degen Web App</div>
-          <div className="flex gap-4">
-            <a href="#" className="">
-              Moderator
-            </a>
-            <a href="#" className="">
-              Admins
-            </a>
-          </div>
-          <div className="flex gap-4">
-            <a href="/register" className="">
-              Get Started
-            </a>
-          </div>
-        </div>
-      </nav>
-
+    <div className="flex flex-col gap-4">
       {/* Hero section of the welcome page */}
       <div className="w-full pt-16">
         <div className="w-full relative pt-4 px-10">
@@ -92,8 +79,6 @@ function Welcome() {
               </div>
             </div>
           ))}
-
-          
         </div>
       </div>
 

@@ -29,7 +29,7 @@ function Login() {
     }
   }
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-screen bg-gradient-to-tr from-black via-gray-900 to-gray-800 flex items-center justify-center">
       <div className="form bg-gray-800 text-white">
         {res.data && (
           <span className="text-green-500 text-center block mt-4">

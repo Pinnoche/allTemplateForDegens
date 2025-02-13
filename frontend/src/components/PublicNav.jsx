@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Navbar() {
+function PublicNav() {
   const [openNav, setOpenNav] = useState(false);
 
   return (
@@ -62,4 +62,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default PublicNav;
