@@ -2,7 +2,11 @@ import axios from "../../axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { setToken } from "../../store/reducers/authSlice";
 function Login() {
+  const dispatch = useDispatch();
+
   const [visibility, setVisibility] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +24,7 @@ function Login() {
       });
       // console.log(res);
       setRes(res);
+      dispatch(setToken(res.data.token));
       setTimeout(() => {
         navigate("/admin");
       }, 2000);

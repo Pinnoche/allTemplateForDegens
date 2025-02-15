@@ -16,8 +16,8 @@ function App() {
           <Route path="/" element={<GuestLayout />}>
             <Route index element={<Welcome />} />
             <Route path="login" element={<Login />} />
+            <Route path="/admin" element={<Dashboard />} />
           </Route>
-          <Route path="/admin" element={<Dashboard />} />
         </Routes>
       </Router>
     </div>
