@@ -35,14 +35,7 @@ export class AuthService {
     if (!user) {
       throw new ConflictException('Degen name or Email Already Exist');
     }
-    const payload = {
-      id: user._id,
-      role: role.name,
-      permission: role.permissions,
-    };
-    return {
-      token: await this.jwtService.signAsync(payload),
-    };
+    return this.generateJwt(user, role);
   }
 
   async login(email: string, password: string): Promise<{ token: string }> {
@@ -53,6 +46,19 @@ export class AuthService {
     const isPassword = await bcrypt.compare(password, user.password);
     if (!isPassword) {
       throw new UnauthorizedException('Invalid Degenname or Password');
+    }
+    const role = await this.roleService.getRoleById(user.roleId);
+    if (!role) {
+      throw new NotFoundException('Role Not Found');
+    }
+    return this.generateJwt(user, role);
+  }
+
+  async refreshToken(token: string): Promise<{ token: string }> {
+    const payload = await this.jwtService.verifyAsync(token);
+    const user = await this.userModel.findById(payload.id);
+    if (!user) {
+      throw new NotFoundException('User Not Found');
     }
     const role = await this.roleService.getRoleById(user.roleId);
     if (!role) {
@@ -75,7 +81,6 @@ export class AuthService {
   ): Promise<{ token: string }> {
     const payload = {
       id: user._id,
-      // role: role.name,
       permission: role.permissions,
     };
     return {

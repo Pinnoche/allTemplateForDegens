@@ -6,9 +6,10 @@ import {
 } from '@nestjs/common';
 
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
+import { Request } from 'express';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -17,16 +18,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private usersService: UsersService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req: Request) => {
+        return req?.cookies?.token;
+      },
       ignoreExpiration: false,
       secretOrKey: config.get<string>('JWT_SECRET'),
     });
   }
 
   async validate(payload): Promise<any> {
-    const { id } = payload;
-
-    const user = await this.usersService.getUser(id);
+    const user = await this.usersService.getUser(payload.id);
 
     if (!user) {
       throw new UnauthorizedException('Please Login to access this feature');

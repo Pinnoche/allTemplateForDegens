@@ -5,12 +5,20 @@ import PublicLayout from "./layout/publicLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Welcome from "./Pages/Guest/Welcome";
 import GuestLayout from "./layout/GuestLayout";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "./store/reducers/authSlice";
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector( state => state.auth)
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
   return (
     <div>
       <Router>
         <Routes>
-          <Route path="/home" element={<PublicLayout />}>
+          <Route path="/home" element={user ? <PublicLayout /> : <Login/ >}>
             <Route index element={<Home />} />
           </Route>
           <Route path="/" element={<GuestLayout />}>

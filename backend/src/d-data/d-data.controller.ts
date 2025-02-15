@@ -19,7 +19,7 @@ export class DDataController {
   constructor(private readonly dDataService: DDataService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async create(
     @Body() createDDatumDto: CreateDDatumDto,
     @Req() req,
@@ -28,7 +28,7 @@ export class DDataController {
   }
 
   @Get()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async getAllData() {
     return this.dDataService.getDatum();
   }

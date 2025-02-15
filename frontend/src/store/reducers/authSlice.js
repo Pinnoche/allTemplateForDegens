@@ -1,22 +1,45 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "../../axios";
+
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get("/auth/profile");
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(null);
+    }
+  }
+);
 
 export const authSlice = createSlice({
-    name: 'Auth',
-    initialState: {
-        user: null,
-        token: null,
+  name: "Auth",
+  initialState: {
+    user: null,
+    loading: true,
+  },
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.isAuth = true;
     },
-    reducers: {
-        setUser: (state, action) => {
-            state.user = action.payload;
-        },
-        setToken: (state, action) => {
-            state.token = action.payload;
-            console.log(state.token);
-        },
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getUser.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getUser.fulfilled, (state, action) => {
+      state.user = action.payload;
+      state.loading = false;
+    });
+    builder.addCase(getUser.rejected, (state) => {
+      state.user = null;
+      state.loading = false;
+    });
+  },
 });
-
 
 export const { setUser, setToken } = authSlice.actions;
 
