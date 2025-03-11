@@ -10,19 +10,21 @@ import PublicLayout from "./layout/publicLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Welcome from "./Pages/Guest/Welcome";
 import GuestLayout from "./layout/GuestLayout";
-// import { useEffect } from "react";
-import { useSelector } from "react-redux";
-// import { getUser } from "./store/reducers/authSlice";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getUser } from "./store/reducers/authSlice";
 function App() {
-  // const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  // const { loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { user, loading } = useSelector((state) => state.auth);
 
-  // useEffect(() => {
-  //   console.log("Current user:", user);
-  //     dispatch(getUser());
-    
-  // }, []);
+  useEffect(() => {
+    dispatch(getUser());
+    console.log("Current user:", user);
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <Router>
@@ -36,7 +38,11 @@ function App() {
           <Route path="/" element={<GuestLayout />}>
             <Route index element={<Welcome />} />
             <Route path="login" element={<Login />} />
-            <Route path="/admin" element={<Dashboard />} />
+            {user ? (
+              <Route path="/admin" element={<Dashboard />} />
+            ) : (
+              <Navigate to="/login" />
+            )}
           </Route>
         </Routes>
       </Router>
