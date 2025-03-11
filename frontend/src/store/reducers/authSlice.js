@@ -18,12 +18,13 @@ export const authSlice = createSlice({
   name: "Auth",
   initialState: {
     user: null,
+    isAuth: false,
     loading: true,
   },
   reducers: {
-    logout: (state) => {
+    setLogout: (state) => {
       state.user = null;
-      state.isAuth = true;
+      state.isAuth = false;
     },
   },
   extraReducers: (builder) => {
@@ -31,7 +32,10 @@ export const authSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getUser.fulfilled, (state, action) => {
-      state.user = action.payload;
+      if (action.payload) {
+        state.user = action.payload;
+        state.isAuth = true;
+      }
       state.loading = false;
     });
     builder.addCase(getUser.rejected, (state) => {
@@ -41,6 +45,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUser, setToken } = authSlice.actions;
+export const { setLogout } = authSlice.actions;
 
 export default authSlice.reducer;

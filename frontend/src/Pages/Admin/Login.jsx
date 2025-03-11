@@ -1,18 +1,17 @@
 import axios from "../../axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { setToken } from "../../store/reducers/authSlice";
+import { getUser } from "../../store/reducers/authSlice";
 function Login() {
   const dispatch = useDispatch();
-
   const [visibility, setVisibility] = useState(false);
   const [email, setEmail] = useState("");
+  const [res, setRes] = useState("");
   const [password, setPassword] = useState("");
-  const [res, setRes] = useState({});
   const [error, setError] = useState([]);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   function togglePasswordVisibility() {
     setVisibility(!visibility);
   }
@@ -22,12 +21,12 @@ function Login() {
         email: email,
         password: password,
       });
-      // console.log(res);
+      dispatch(getUser());
       setRes(res);
-      dispatch(setToken(res.data.token));
-      setTimeout(() => {
-        navigate("/admin");
-      }, 2000);
+      console.log(res.data);
+      // setTimeout(() => {
+      //   navigate("/admin");
+      // }, 2000);
     } catch (err) {
       setError(err?.response?.data?.message);
       console.log(error);

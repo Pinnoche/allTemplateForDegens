@@ -1,15 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as cookie from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cookie());
+  app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:5173',
-    methods: 'GET,POST,PUT,PATCH,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    origin: 'https://df1b-197-211-63-15.ngrok-free.app',
     credentials: true,
   });
   app.setGlobalPrefix('api');
