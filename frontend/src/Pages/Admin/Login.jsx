@@ -23,7 +23,6 @@ function Login() {
       });
       dispatch(getUser());
       setRes(res);
-      console.log(res.data);
       setTimeout(() => {
         navigate("/admin");
       }, 2000);
