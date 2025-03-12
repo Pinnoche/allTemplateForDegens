@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./Pages/Admin/Login";
+import Signup from "./Pages/Admin/Signup";
 import Home from "./Pages/Public/Home";
 import PublicLayout from "./layout/publicLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
@@ -31,18 +32,16 @@ function App() {
         <Routes>
           <Route
             path="/home"
-            element={user ? <PublicLayout /> : <Navigate to="/login" />}
+            element={ <PublicLayout />}
           >
             <Route index element={<Home />} />
           </Route>
           <Route path="/" element={<GuestLayout />}>
             <Route index element={<Welcome />} />
             <Route path="login" element={<Login />} />
-            {user ? (
-              <Route path="/admin" element={<Dashboard />} />
-            ) : (
-              <Navigate to="/login" />
-            )}
+            <Route path="signup" element={<Signup />} />
+              <Route path="/admin" element={ <Dashboard /> } />
+           
           </Route>
         </Routes>
       </Router>
