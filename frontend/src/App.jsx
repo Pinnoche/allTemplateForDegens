@@ -4,11 +4,11 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import Dashboard from "./Pages/Admin/Dashboard";
 import Login from "./Pages/Admin/Login";
 import Signup from "./Pages/Admin/Signup";
 import Home from "./Pages/Public/Home";
 import PublicLayout from "./layout/publicLayout";
-import Dashboard from "./Pages/Admin/Dashboard";
 import Welcome from "./Pages/Guest/Welcome";
 import GuestLayout from "./layout/GuestLayout";
 import { useEffect } from "react";
