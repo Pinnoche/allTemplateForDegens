@@ -1,5 +1,5 @@
 // import { useSelector } from "react-redux";
-import React, { useState } from "react";
+import { useState } from "react";
 import './Style.css';
 
 const Dashboard = () => {
