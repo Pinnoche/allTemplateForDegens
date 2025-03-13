@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import "./Style.css"
+// import { useSelector } from "react-redux";
+import { useState } from "react";
+import './Style.css';
 
 const Dashboard = () => {
   const [activeSlide, setActiveSlide] = useState(null);
@@ -148,7 +149,7 @@ const Dashboard = () => {
                   <label htmlFor="discord"
                    className="absolute top-0 left-4 px-1 bg-gray-800"
                   >
-                    <i class='bx bxl-discord-alt' ></i>
+                    <i className='bx bxl-discord-alt' ></i>
                       Discord
                   </label>
                   <input 
@@ -163,7 +164,7 @@ const Dashboard = () => {
                   <label htmlFor="telegram"
                    className="absolute top-0 left-4 px-1 bg-gray-800"
                   >
-                    <i class='bx bxl-telegram' ></i>
+                    <i className='bx bxl-telegram' ></i>
                       Telegram
                   </label>
                   <input 
