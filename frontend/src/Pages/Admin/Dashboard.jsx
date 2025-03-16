@@ -7,13 +7,13 @@ const Dashboard = () => {
   const [sectionTitle, setSectionTitle] = useState("Dashboard");
   const [scaling, setScaling] = useState(false);
   const [formData, setFormData] = useState({
-    x: "",
+    x_username: "",
     discord: "",
     telegram: "",
     tokenName: "",
-    tokenAbbreviation: "",
-    contractAddress: "",
-    tokenDescription: "",
+    ticker: "",
+    contract_address: "",
+    token_description: "",
     primaryImage: null,
     secondaryImage1: null,
     secondaryImage2: null,
@@ -142,7 +142,7 @@ const Dashboard = () => {
                     name="x" 
                     placeholder="https://x.com/username" 
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={formData.x} onChange={handleChange} 
+                    value={formData.x_username} onChange={handleChange} 
                   />
                 </div>
                 <div className="relative py-4 mb-6 text-white">
@@ -209,7 +209,7 @@ const Dashboard = () => {
                     name="tokenAbbreviation" 
                     placeholder="SOL" 
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={formData.tokenAbbreviation} onChange={handleChange} 
+                    value={formData.ticker} onChange={handleChange} 
                   />
                 </div>
                 <div className="relative py-4 mb-6 text-white">
@@ -223,7 +223,7 @@ const Dashboard = () => {
                     name="contractAddress" 
                     placeholder="0x123......xxx" 
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={formData.contractAddress} onChange={handleChange} 
+                    value={formData.contract_address} onChange={handleChange} 
                   />
                 </div>
                 
@@ -238,7 +238,7 @@ const Dashboard = () => {
                     name="tokenDescription" 
                     placeholder="Token Description" 
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={formData.tokenDescription} onChange={handleChange} 
+                    value={formData.token_description} onChange={handleChange} 
                   ></textarea>
                 </div>
                 <div className="flex justify-between">

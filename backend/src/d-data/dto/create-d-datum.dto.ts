@@ -10,6 +10,10 @@ export class CreateDDatumDto {
 
   @IsNotEmpty()
   @IsString()
+  token_description: string;
+
+  @IsNotEmpty()
+  @IsString()
   x_username: string;
 
   @IsNotEmpty()

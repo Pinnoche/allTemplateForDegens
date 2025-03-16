@@ -12,6 +12,9 @@ export class Data extends Document {
   @Prop({ unique: true })
   contract_address: string;
 
+  @Prop({ unique: false })
+  token_description: string;
+
   @Prop({ unique: true })
   x_username: string;
 
