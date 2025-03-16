@@ -1,0 +1,239 @@
+// import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import './Style.css';
+
+const Dashboard = () => {
+  const [scaling, setScaling] = useState(false);
+
+  // Fetch user and loading state from Redux store
+  // const { user, loading } = useSelector((state) => state.auth);
+
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen">
+  //       <p className="text-white">Loading...</p>
+  //     </div>
+  //   );
+  // }
+
+  // if (!user) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen">
+  //       <p className="text-white">No user data available. Please log in.</p>
+  //     </div>
+  //   );
+  // }
+
+  return (
+    <div className="h-full flex bg-gradient-to-tr from-black via-gray-900 to-gray-800 text-white">
+      
+      <div className="w-[20%] bg-gray-800 p-6 mt-20 flex flex-col space-y-4 h-screen fixed">
+        <h2 className="text-2xl font-bold text-purple-400 text-center mb-2">Dashboard</h2>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600 scale">
+          Dashboard
+        </button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600 scale">
+          Create/Edit Your Website
+        </button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600 scale">
+          Demo Button 1
+        </button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600 scale">
+          Demo Button 2
+        </button>
+      </div>
+
+      
+      <div className="flex-1 pt-16 ml-[20%]">
+        <div className="flex flex-col justify-start px-10">
+          <p className="text-start mt-4 text-white text-xl">
+            Hello, Kumundo
+            {/* {user.name || user.email}! */}
+          </p>
+          <h1 className="text-white font-bold text-2xl">
+            Welcome to the Admin Dashboard
+          </h1>
+        </div>
+
+        <div className="w-full relative pt-4 px-10">
+          <div
+            onMouseEnter={() => setScaling(true)}
+            onMouseLeave={() => setScaling(false)}
+            className={`w-full mb-4 bg-gradient-to-tr from-black via-gray-800 to-black rounded-md flex flex-col items-center p-4 space-y-8 transition duration-700 ease-in-out transform ${
+              scaling ? "scale-105" : ""
+            }`}
+          >
+            <h1 className="p-4 font-bold break-words w-[60%] text-6xl text-center text-white">
+              Your Degen Web App at Your Fingertips
+            </h1>
+            <p className="w-[50%] break-words text-gray-400 text-center">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+              convallis libero et felis elementum, et fermentum odio euismod.
+              Nullam auctor, odio ac scelerisque.
+            </p>
+            <div className="flex justify-center">
+              <button className="px-6 py-3 bg-purple-800 rounded-md hover:bg-purple-600 scale">
+                Get Started
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState } from "react";
+import "./Style.css";
+
+const Dashboard = () => {
+  const [activeSlide, setActiveSlide] = useState(null);
+  const [sectionTitle, setSectionTitle] = useState("Dashboard");
+  const [scaling, setScaling] = useState(false);
+  const [formData, setFormData] = useState({
+    x: "",
+    discord: "",
+    telegram: "",
+    tokenName: "",
+    tokenAbbreviation: "",
+    contractAddress: "",
+    tokenDescription: "",
+    primaryImage: null,
+    secondaryImage1: null,
+    secondaryImage2: null,
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = (e, field) => {
+    setFormData({ ...formData, [field]: e.target.files[0] });
+  };
+
+  const handleNext = () => setActiveSlide((prev) => prev + 1);
+  const handleBack = () => setActiveSlide((prev) => prev - 1);
+  const handleSkip = () => setActiveSlide((prev) => prev + 1);
+  const handleSubmit = () => console.log("Form Data Submitted:", formData);
+
+  // Calculate progress percentage
+  const progressPercentage = activeSlide !== null ? ((activeSlide / 3) * 100) : 0;
+
+  return (
+    <div className="h-full flex bg-gradient-to-tr from-black via-gray-900 to-gray-800 text-white">
+      {/* Sidebar */}
+      <div className="w-[20%] bg-gray-800 p-6 mt-20 flex flex-col space-y-4 h-screen fixed">
+        <h2 className="text-2xl font-bold text-purple-400 text-center mb-2">{sectionTitle}</h2>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600"
+          onClick={() => { setActiveSlide(null); setSectionTitle("Dashboard"); }}>
+          Dashboard
+        </button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600"
+          onClick={() => { setActiveSlide(1); setSectionTitle("Create/Edit Website"); }}>
+          Create/Edit Your Website
+        </button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600">Demo Button 1</button>
+        <button className="w-full py-2 bg-gray-700 rounded-md hover:bg-purple-600">Demo Button 2</button>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 pt-16 ml-[20%] px-10">
+        {activeSlide === null ? (
+          // Default Dashboard Content
+          <div>
+            <div className="flex flex-col justify-start px-10">
+              <p className="text-start mt-4 text-white text-xl">Hello, Kumundo</p>
+              <h1 className="text-white font-bold text-2xl">Welcome to the Admin Dashboard</h1>
+            </div>
+            <div className="w-full relative pt-4 px-10">
+              <div
+                onMouseEnter={() => setScaling(true)}
+                onMouseLeave={() => setScaling(false)}
+                className={`w-full mb-4 bg-gradient-to-tr from-black via-gray-800 to-black rounded-md flex flex-col items-center p-4 space-y-8 transition duration-700 ease-in-out transform ${
+                  scaling ? "scale-105" : ""
+                }`}
+              >
+                <h1 className="p-4 font-bold break-words w-[60%] text-6xl text-center text-white">
+                  Your Degen Web App at Your Fingertips
+                </h1>
+                <p className="w-[50%] break-words text-gray-400 text-center">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+                  convallis libero et felis elementum, et fermentum odio euismod.
+                  Nullam auctor, odio ac scelerisque.
+                </p>
+                <div className="flex justify-center">
+                  <button className="px-6 py-3 bg-purple-800 rounded-md hover:bg-purple-600">
+                    Get Started
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // Interactive Form Slides
+          <div className="bg-gradient-to-tr from-black via-gray-800 to-black my-4 p-6 mx-10 space-y-5 rounded-md relative">
+            {activeSlide > 1 && (
+              <button
+                className="absolute top-4 right-4 px-4 py-2 bg-gray-700 rounded-md hover:bg-purple-600"
+                onClick={handleBack}
+              >
+                Back
+              </button>
+            )}
+
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
+              <div
+                className="bg-purple-600 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+
+            {/* Form Slides */}
+            {activeSlide === 1 && (
+              <>
+                <h2 className="text-3xl font-bold text-purple-400 text-center mb-2">Social Links</h2>
+                <input type="text" name="x" placeholder="X" value={formData.x} onChange={handleChange} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <input type="text" name="discord" placeholder="Discord" value={formData.discord} onChange={handleChange} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <input type="text" name="telegram" placeholder="Telegram" value={formData.telegram} onChange={handleChange} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <button className="bg-purple-800 px-4 py-2 rounded hover:bg-purple-600" onClick={handleNext}>Next</button>
+              </>
+            )}
+
+            {activeSlide === 2 && (
+              <>
+                <h2 className="text-3xl font-bold text-purple-400 text-center mb-2">Token Details</h2>
+                <input type="text" name="tokenName" placeholder="Token Name" value={formData.tokenName} onChange={handleChange} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <input type="text" name="tokenAbbreviation" placeholder="Token Abbreviation" value={formData.tokenAbbreviation} onChange={handleChange} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <button className="bg-purple-800 px-4 py-2 rounded hover:bg-purple-600" onClick={handleNext}>Next</button>
+              </>
+            )}
+
+            {activeSlide === 3 && (
+              <>
+                <h2 className="text-3xl font-bold text-purple-400 text-center mb-2">Upload Images</h2>
+                <input type="file" name="primaryImage" onChange={(e) => handleImageUpload(e, "primaryImage")} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <input type="file" name="secondaryImage1" onChange={(e) => handleImageUpload(e, "secondaryImage1")} className="w-full px-3 py-2 mb-4 bg-gray-800 border border-gray-600 rounded-md" />
+                <button className="bg-purple-800 px-4 py-2 rounded hover:bg-purple-600" onClick={handleSubmit}>Submit</button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
