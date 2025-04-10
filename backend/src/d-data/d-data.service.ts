@@ -9,7 +9,13 @@ import { Data } from './schemas/d-data.schema';
 import mongoose, { Model } from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
 import { UpdateDDatumDto } from './dto/update-d-datum.dto';
+import { uploadImagesToS3 } from 'src/Utils/asw';
 
+// interface S3Image {
+//   Bucket: string;
+//   Key: string;
+//   Location: string;
+// }
 @Injectable()
 export class DDataService {
   @InjectModel(Data.name)
@@ -85,5 +91,19 @@ export class DDataService {
       throw new NotFoundException('User not found');
     }
     return { message: 'Data deleted Successfully' };
+  }
+
+  async uploadImages(id: string, files: Array<Express.Multer.File>) {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new NotAcceptableException();
+    }
+    const data = await this.dataModel.findById(id);
+    if (!data) {
+      throw new NotFoundException('Data not found');
+    }
+    const imageUrls = await uploadImagesToS3(files);
+
+    return imageUrls;
   }
 }

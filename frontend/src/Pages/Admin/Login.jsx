@@ -1,5 +1,7 @@
 import axios from "../../axios";
 import { useState } from "react";
+import { toast } from "sonner";
+import { getErrorMessge } from "../../Utils/Helper";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useDispatch } from "react-redux";
@@ -7,38 +9,41 @@ import { getUser } from "../../store/reducers/authSlice";
 function Login() {
   const dispatch = useDispatch();
   const [visibility, setVisibility] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [res, setRes] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState([]);
   const navigate = useNavigate();
   function togglePasswordVisibility() {
     setVisibility(!visibility);
   }
   async function handleSubmit() {
     try {
-      const res = await axios.post("/auth/login", {
+      setIsLoading(true);
+      if (!email || !password) {
+        toast.error("Please fill in all fields");
+        setIsLoading(false);
+        return;
+      }
+      await axios.post("/auth/login", {
         email: email,
         password: password,
       });
       dispatch(getUser());
-      setRes(res);
-      setTimeout(() => {
-        navigate("/admin");
-      }, 2000);
+      toast.success("Login successful!");
+      setEmail("");
+      setPassword("");
+      setVisibility(false);
+      setIsLoading(false);
+      navigate("/admin");
     } catch (err) {
-      setError(err?.response?.data?.message);
-      console.log(error);
+      const errorMsg = getErrorMessge(err);
+      toast.error(errorMsg);
+      setIsLoading(false);
     }
   }
   return (
     <div className="h-screen bg-gradient-to-tr from-black via-gray-900 to-gray-800 flex items-center justify-center">
       <div className="form bg-gray-800 text-white">
-        {res.data && (
-          <span className="text-green-500 text-center block mt-4">
-            Login Successful
-          </span>
-        )}
         <div className="mb-4 border-b pb-4 border-purple-200 text-center">
           <h1 className="text-2xl font-semibold font-serif">
             Log In to your account
@@ -61,11 +66,6 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
-            {error && (
-              <span className="text-red-500 text-center block mt-4">
-                {error[0]}
-              </span>
-            )}
           </div>
           <div className="relative py-4">
             <label
@@ -91,11 +91,6 @@ function Login() {
               >
                 {visibility ? <FiEyeOff /> : <FiEye />}
               </button>
-              {error && (
-                <span className="text-red-500 text-center block mt-4">
-                  {error[2]}
-                </span>
-              )}
             </div>
           </div>
           <div className="text-right mb-4">
@@ -118,11 +113,12 @@ function Login() {
             <button
               type="submit"
               className="submitBtn w-full"
+              disabled={isLoading}
               onClick={() => {
                 handleSubmit();
               }}
             >
-              Login
+              {isLoading ? "Loading...." : "Login"}
             </button>
           </div>
         </form>

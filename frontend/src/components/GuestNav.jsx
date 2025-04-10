@@ -12,7 +12,7 @@ export default function GuestNav() {
           </a>
         </div>
         <div className="flex gap-4">
-          <a href="/register" className="">
+          <a href="/signup" className="">
             Get Started
           </a>
         </div>

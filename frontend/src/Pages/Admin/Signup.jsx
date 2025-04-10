@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "../../axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessge } from "../../Utils/Helper";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -20,25 +21,26 @@ const Signup = () => {
     setEye(!eye);
   }
   const handleSubmit = async () => {
-    await axios.post("/auth/signup", {
-      email: email,
-      password: password,
-      degen_name: degen,
-    });
-    toast.success("Account created successfully");
-    setTimeout(() => {
-      navigate("/admin");
-    }, 2000);
+    try {
+      await axios.post("/auth/signup", {
+        email: email,
+        password: password,
+        degen_name: degen,
+      });
+      toast.success("Account created successfully");
+      setTimeout(() => {
+        navigate("/admin");
+      }, 2000);
+    } catch (error) {
+      const errorMsg = getErrorMessge(error);
+      console.log(errorMsg);
+      toast.error(errorMsg);
+    }
   };
 
   return (
     <div className="h-screen bg-gradient-to-tr from-black via-gray-900 to-gray-800 flex items-center justify-center">
       <div className="form bg-gray-800 text-white">
-        {/* {res.data && (
-                <span className="text-green-500 text-center block mt-4">
-                Login Successful
-                </span>
-            )} */}
         <div className="mb-4 border-b pb-4 border-purple-200 text-center">
           <h1 className="text-2xl font-semibold font-serif">
             Sign Up a new account
@@ -61,11 +63,6 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
-            {/* {error && (
-                        <span className="text-red-500 text-center block mt-4">
-                        {error[0]}
-                        </span>
-                    )} */}
           </div>
           <div className="relative py-4 mb-6 text-white">
             <label
@@ -83,11 +80,6 @@ const Signup = () => {
               onChange={(e) => setDegen(e.target.value)}
               value={degen}
             />
-            {/* {error && (
-                        <span className="text-red-500 text-center block mt-4">
-                        {error[0]}
-                        </span>
-                    )} */}
           </div>
           <div className="relative py-4">
             <label
@@ -113,12 +105,6 @@ const Signup = () => {
               >
                 {visibility ? <FiEyeOff /> : <FiEye />}
               </button>
-
-              {/* {error && (
-                        <span className="text-red-500 text-center block mt-4">
-                            {error[2]}
-                        </span>
-                        )} */}
             </div>
             <div className="relative w-full mt-2">
               <input
@@ -140,12 +126,6 @@ const Signup = () => {
               >
                 {eye ? <FiEyeOff /> : <FiEye />}
               </button>
-
-              {/* {error && (
-                        <span className="text-red-500 text-center block mt-4">
-                            {error[2]}
-                        </span>
-                        )} */}
             </div>
           </div>
 
@@ -162,8 +142,8 @@ const Signup = () => {
           </div>
         </form>
         <p className="text-gray-400 text-center mt-6">
-          Already a user?{" "}
-          <a href="#" className="text-purple-500 hover:underline">
+          Already a degen?{" "}
+          <a href="/login" className="text-purple-500 hover:underline">
             Login
           </a>
         </p>

@@ -5,8 +5,6 @@ import {
   // Navigate,
 } from "react-router-dom";
 import Dashboard from "./Pages/Admin/Dashboard";
-import {ToastContainer} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Login from "./Pages/Admin/Login";
 import Signup from "./Pages/Admin/Signup";
 import Home from "./Pages/Public/Home";
@@ -16,6 +14,8 @@ import GuestLayout from "./layout/GuestLayout";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUser } from "./store/reducers/authSlice";
+import { LottiePlay } from "./components/LottiePlay";
+import { Toaster } from "sonner";
 function App() {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
@@ -30,7 +30,6 @@ function App() {
   }
   return (
     <div>
-        <ToastContainer />
       <Router>
         <Routes>
           <Route path="/home" element={<PublicLayout />}>
@@ -43,6 +42,30 @@ function App() {
             <Route path="/admin" element={<Dashboard />} />
           </Route>
         </Routes>
+        <Toaster
+          duration={5000}
+          position="top-center"
+          z-index= {100}
+          // closeButton={true}
+          // expand
+          icons={{
+            success: <LottiePlay />,
+          }}
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              closeButton:
+                "absolute top-2 right-2 bg-primary text-white rounded-full p-1 cursor-pointer",
+              toast:
+                "text-text bg-white rounded-[5px] font-thin text-sm flex gap-3 shadow-md shadow-[#B63B562B] p-6 border-[0.1px] border-text-xtralight-alt min-w-[200px] max-w-[350px]",
+              error:
+                "text-text bg-white rounded-[5px] font-thin text-sm flex gap-3 shadow-md shadow-[#B63B562B] p-6 border-[0.1px] border-text-xtralight-alt min-w-[200px] max-w-[350px]",
+              success:
+                "text-text bg-white rounded-[5px] font-thin text-sm flex gap-3 shadow-md shadow-[#B63B562B] p-6 border-[0.1px] border-text-xtralight-alt min-w-[200px] max-w-[350px]",
+            },
+          }}
+          pauseWhenPageIsHidden
+        />
       </Router>
     </div>
   );
