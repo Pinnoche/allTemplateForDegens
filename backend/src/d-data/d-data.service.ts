@@ -9,7 +9,7 @@ import { Data } from './schemas/d-data.schema';
 import mongoose, { Model } from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
 import { UpdateDDatumDto } from './dto/update-d-datum.dto';
-import { uploadImagesToS3 } from 'src/Utils/asw';
+import { deleteImagesFromS3, uploadImagesToS3 } from 'src/Utils/asw';
 
 // interface S3Image {
 //   Bucket: string;
@@ -93,17 +93,36 @@ export class DDataService {
     return { message: 'Data deleted Successfully' };
   }
 
-  async uploadImages(id: string, files: Array<Express.Multer.File>) {
-    const isValidId = mongoose.isValidObjectId(id);
-    if (!isValidId) {
-      throw new NotAcceptableException();
-    }
-    const data = await this.dataModel.findById(id);
-    if (!data) {
-      throw new NotFoundException('Data not found');
-    }
-    const imageUrls = await uploadImagesToS3(files);
+  async uploadImages(files: Array<Express.Multer.File>) {
+    // const isValidId = mongoose.isValidObjectId(id);
+    // if (!isValidId) {
+    //   throw new NotAcceptableException();
+    // }
+    // const data = await this.dataModel.findById(id);
+    // if (!data) {
+    //   throw new NotFoundException('Data not found');
+    // }
+    const imageUrls = (await uploadImagesToS3(files)) as Array<{
+      Bucket: string;
+      Key: string;
+      Location: string;
+    }>;
 
-    return imageUrls;
+    console.log(imageUrls.map((image) => image.Location));
+    return imageUrls.map((image) => image.Location);
+  }
+
+  async deleteImages(files: Array<Express.Multer.File>) {
+    // const isValidId = mongoose.isValidObjectId(id);
+    // if (!isValidId) {
+    //   throw new NotAcceptableException();
+    // }
+    // const data = await this.dataModel.findById(id);
+    //
+    // if (!data) {
+    //   throw new NotFoundException('Data not found');
+    // }
+    const imageData = await deleteImagesFromS3(files);
+    return imageData;
   }
 }

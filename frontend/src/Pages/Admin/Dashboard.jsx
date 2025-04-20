@@ -1,11 +1,20 @@
 // import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./Style.css";
-
+import axios from "../../axios";
+// import { toast } from "sonner";
+// import { getErrorMessge } from "../../Utils/Helper";
 const Dashboard = () => {
   const [activeSlide, setActiveSlide] = useState(null);
   const [sectionTitle, setSectionTitle] = useState("Dashboard");
   const [scaling, setScaling] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [selectedIconName, setSelectedIconName] = useState(null);
+  const [selectedBannerName, setSelectedBannerName] = useState(null);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [formData, setFormData] = useState({
     x_username: "",
     discord: "",
@@ -14,17 +23,78 @@ const Dashboard = () => {
     ticker: "",
     contract_address: "",
     token_description: "",
-    primaryImage: null,
+    icon: null,
     secondaryImage1: null,
     secondaryImage2: null,
   });
+  const iconRef = useRef(null);
+  const bannerRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageUpload = (e, field) => {
-    setFormData({ ...formData, [field]: e.target.files[0] });
+  const handleImageUpload = (e, type) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    if (type === "icon") {
+      setSelectedIcon(url);
+      setSelectedIconName(file.name);
+      uploadImage(file);
+    } else if (type === "banner") {
+      setSelectedBanner(url);
+      setSelectedBannerName(file.name);
+      uploadImage(file);
+    }
+    // else if (type === "secondaryImage2") {
+    //   setFormData({ ...formData, secondaryImage2: file });
+    // }
+
+    // setFormData({ ...formData, [field]: e.target.files[0] });
+  };
+
+  const uploadImage = async (file) => {
+    setIsImageUploading(true);
+    setUploadProgress(0);
+    setIsImageUploaded(false);
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      const response = await axios.post("/data/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          // Authorization: `Bearer ${token}`, // Uncomment if using JWT guard
+        },
+        onUploadProgress: (ProgressEvent) => {
+          const { loaded, total } = ProgressEvent;
+          const percent = Math.floor((loaded * 100) / total);
+          setUploadProgress(percent);
+        },
+      });
+      setIsImageUploading(false);
+      setIsImageUploaded(true);
+      console.log("Uploaded URL:", response.data);
+      return;
+    } catch (error) {
+      console.error("Upload failed:", error.response?.data || error.message);
+      throw error;
+    }
+  };
+  const resetFileInput = (type) => {
+    if (type === "icon") {
+      setSelectedIcon(null);
+      iconRef.current.value = null;
+    } else if (type === "banner") {
+      setSelectedBanner(null);
+      bannerRef.current.value = null;
+    }
+    // else if (type === "secondaryImage2") {
+
+    // }
   };
 
   const handleNext = () => setActiveSlide((prev) => prev + 1);
@@ -303,38 +373,95 @@ const Dashboard = () => {
                 <h2 className="text-3xl font-bold text-purple-400 text-center mb-2">
                   Upload Images
                 </h2>
-                <div className="relative py-4 mb-6 text-white">
+
+                <div className="relative py-4 mb-6 text-white border border-gray-600 rounded-lg px-4">
                   <label
-                    htmlFor="primaryImage"
-                    className="absolute top-0 left-4 px-1 bg-gray-800"
+                    htmlFor="icon-upload"
+                    className="absolute -top-3 left-4 px-2 bg-gray-800 text-sm"
                   >
-                    Primary Image
+                    Icon
                   </label>
-                  <input
-                    type="file"
-                    name="primaryImage"
-                    placeholder="Primary Image"
-                    className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    onChange={(e) => handleImageUpload(e, "primaryImage")}
-                  />
+                  <div>
+                    {selectedIcon ? (
+                      <div className="flex items-center justify-between">
+                        <img
+                          src={selectedIcon}
+                          alt="icon"
+                          className="h-12 w-12 object-cover rounded-full border border-gray-600 p-2 "
+                        />
+                        <span>{selectedIconName}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            resetFileInput("icon");
+                          }}
+                          className="text-red-400 hover:text-red-300 text-sm cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          id="icon-upload"
+                          type="file"
+                          name="icon"
+                          accept="image/*"
+                          ref={iconRef}
+                          className="w-full mt-2 bg-transparent file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0 file:text-white
+                                    file:bg-purple-600 hover:file:bg-purple-700
+                                    file:cursor-pointer focus:outline-none cursor-pointer"
+                          onChange={(e) => handleImageUpload(e, "icon")}
+                        />
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                <div className="relative py-4 mb-6 text-white">
+                <div className="relative py-4 mb-6 text-white border border-gray-600 rounded-lg px-4">
                   <label
-                    htmlFor="secondaryImage1"
-                    className="absolute top-0 left-4 px-1 bg-gray-800"
+                    htmlFor="banner-upload"
+                    className="absolute -top-3 left-4 px-2 text-sm bg-gray-800"
                   >
-                    Secondary Image 1
+                    Banner
                   </label>
-                  <input
-                    type="file"
-                    name="secondaryImage1"
-                    placeholder="Secondary Image 1"
-                    className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    onChange={(e) => handleImageUpload(e, "secondaryImage1")}
-                  />
+                  {selectedBanner ? (
+                    <div className="flex items-center justify-between">
+                      <img
+                        src={selectedBanner}
+                        alt="icon"
+                        className="h-12 w-12 object-cover rounded-md border border-gray-600 p-2 "
+                      />
+                      <span>{selectedBannerName}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          resetFileInput("banner");
+                        }}
+                        className="text-red-400 hover:text-red-300 text-sm cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        id="banner-upload"
+                        type="file"
+                        name="icon"
+                        accept="image/*"
+                        ref={bannerRef}
+                        className="w-full mt-2 bg-transparent file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0 file:text-white
+                                    file:bg-purple-600 hover:file:bg-purple-700
+                                    file:cursor-pointer focus:outline-none cursor-pointer"
+                        onChange={(e) => handleImageUpload(e, "banner")}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="relative py-4 mb-6 text-white">
+                {/* <div className="relative py-4 mb-6 text-white">
                   <label
                     htmlFor="secondaryImage2"
                     className="absolute top-0 left-4 px-1 bg-gray-800"
@@ -348,7 +475,7 @@ const Dashboard = () => {
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     onChange={(e) => handleImageUpload(e, "secondaryImage2")}
                   />
-                </div>
+                </div> */}
                 <button
                   className="bg-purple-800 px-4 py-2 rounded hover:bg-purple-600 items-end scale"
                   onClick={handleSubmit}

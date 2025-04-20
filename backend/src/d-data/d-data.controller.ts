@@ -11,6 +11,8 @@ import {
   // Put,
   UploadedFiles,
   UseInterceptors,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { DDataService } from './d-data.service';
 import { CreateDDatumDto } from './dto/create-d-datum.dto';
@@ -49,25 +51,43 @@ export class DDataController {
   }
 
   @Get('user')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async getUserData(@Req() req): Promise<any> {
     return await this.dDataService.getDataByUserId(req.user);
   }
 
-  @Post('upload/:id')
-  @UseGuards(AuthGuard())
+  @Post('upload')
+  // @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FilesInterceptor('files'))
   async uploadImages(
-    @Param('id') id: string,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    // @Param('id') id: string,
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpg|jpeg|png)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1000 * 1024,
+          message: 'File size must be less than 1MB',
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    files: Array<Express.Multer.File>,
   ): Promise<any> {
-    console.log(id);
-    console.log(files);
-    return await this.dDataService.uploadImages(id, files);
-    return;
+    return await this.dDataService.uploadImages(files);
+  }
+
+  @Delete('image/delete')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('files'))
+  async deleteImages(files: Array<Express.Multer.File>): Promise<any> {
+    return await this.dDataService.deleteImages(files);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updateDDatumDto: UpdateDDatumDto,
@@ -76,6 +96,7 @@ export class DDataController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   async remove(@Param('id') id: string): Promise<any> {
     return await this.dDataService.remove(id);
   }

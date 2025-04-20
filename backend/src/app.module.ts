@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -8,9 +8,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
-import { verifySubdomain } from './verifySubdomain';
+// import { verifySubdomain } from './verifySubdomain';
 // import { UsersController } from './users/users.controller';
-import { DDataController } from './d-data/d-data.controller';
+// import { DDataController } from './d-data/d-data.controller';
 import { Reserved_Subdomain } from './reserved-subdomain';
 import { SuperadminModule } from './superadmin/superadmin.module';
 import { Role, RoleSchema } from './roles/schema/roles.schema';
@@ -41,8 +41,9 @@ import { RoleFactory } from './roles/roles.factory';
   controllers: [AppController],
   providers: [AppService, Reserved_Subdomain, RoleFactory],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(verifySubdomain).forRoutes(DDataController);
-  }
-}
+// export class AppModule implements NestModule {
+// configure(consumer: MiddlewareConsumer) {
+//   consumer.apply(verifySubdomain).forRoutes(DDataController);
+// }
+// }
+export class AppModule {}

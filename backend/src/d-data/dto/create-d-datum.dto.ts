@@ -24,6 +24,12 @@ export class CreateDDatumDto {
   @IsString()
   discord: string;
 
+  @IsNotEmpty()
+  icon: object[];
+
+  @IsNotEmpty()
+  banner: object[];
+
   @IsEmpty()
   userId: User;
 }

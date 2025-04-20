@@ -23,6 +23,13 @@ export class Data extends Document {
 
   @Prop({ unique: true })
   discord: string;
+
+  @Prop()
+  icon: object[];
+
+  @Prop()
+  banner: object[];
+
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
