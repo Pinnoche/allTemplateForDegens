@@ -23,31 +23,31 @@ const Dashboard = () => {
     ticker: "",
     contract_address: "",
     token_description: "",
-    icon: null,
-    secondaryImage1: null,
-    secondaryImage2: null,
+    icon: "",
+    banner: "",
   });
   const iconRef = useRef(null);
   const bannerRef = useRef(null);
 
   const handleChange = (e) => {
+    console.log("Value", e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageUpload = (e, type) => {
+  const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) {
       return;
     }
     const url = URL.createObjectURL(file);
     if (type === "icon") {
+      await uploadImage(file, type);
       setSelectedIcon(url);
       setSelectedIconName(file.name);
-      uploadImage(file);
     } else if (type === "banner") {
+      await uploadImage(file, type);
       setSelectedBanner(url);
       setSelectedBannerName(file.name);
-      uploadImage(file);
     }
     // else if (type === "secondaryImage2") {
     //   setFormData({ ...formData, secondaryImage2: file });
@@ -56,7 +56,7 @@ const Dashboard = () => {
     // setFormData({ ...formData, [field]: e.target.files[0] });
   };
 
-  const uploadImage = async (file) => {
+  const uploadImage = async (file, type) => {
     setIsImageUploading(true);
     setUploadProgress(0);
     setIsImageUploaded(false);
@@ -77,24 +77,53 @@ const Dashboard = () => {
       });
       setIsImageUploading(false);
       setIsImageUploaded(true);
-      console.log("Uploaded URL:", response.data);
-      return;
+      console.log("FIleUrl: ", response.data[0]);
+      const fileUrl = response.data[0];
+      setFormData((prev) => ({
+        ...prev,
+        [type]: fileUrl,
+      }));
+      return fileUrl;
     } catch (error) {
       console.error("Upload failed:", error.response?.data || error.message);
       throw error;
     }
   };
-  const resetFileInput = (type) => {
-    if (type === "icon") {
-      setSelectedIcon(null);
-      iconRef.current.value = null;
-    } else if (type === "banner") {
-      setSelectedBanner(null);
-      bannerRef.current.value = null;
-    }
-    // else if (type === "secondaryImage2") {
 
-    // }
+  const resetFileInput = async (type) => {
+    if (type === "icon") {
+      await removeImage(selectedIconName);
+      setSelectedIcon(null);
+      setSelectedIconName(null);
+      if (iconRef.current) {
+        iconRef.current.value = "";
+      }
+
+      setFormData((prev) => ({ ...prev, [type]: "" }));
+    } else if (type === "banner") {
+      await removeImage(selectedBannerName);
+      setSelectedBanner(null);
+      setSelectedBannerName(null);
+      if (bannerRef.current) {
+        bannerRef.current.value = "";
+      }
+      setFormData((prev) => ({ ...prev, [type]: "" }));
+    }
+  };
+
+  const removeImage = async (files) => {
+    try {
+      const response = await axios.delete(
+        `/data/image/delete/${files}`
+        // headers: {
+        //   // Authorization: `Bearer ${token}`, // Uncomment if using JWT guard
+        // }
+      );
+      console.log("Deleted Files: ", response.data);
+    } catch (error) {
+      console.error("Delete failed:", error.response?.data || error.message);
+      throw error;
+    }
   };
 
   const handleNext = () => setActiveSlide((prev) => prev + 1);
@@ -104,28 +133,12 @@ const Dashboard = () => {
   const handleSkip = () => {
     setActiveSlide((prev) => (prev < 3 ? prev + 1 : 3));
   };
-  const handleSubmit = () => console.log("Form Data Submitted:", formData);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data Submitted:", formData);
+  };
 
   const progressPercentage = activeSlide !== 0 ? (activeSlide / 3) * 100 : 0;
-
-  // Fetch user and loading state from Redux store
-  // const { user, loading } = useSelector((state) => state.auth);
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <p className="text-white">Loading...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (!user) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <p className="text-white">No user data available. Please log in.</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="h-full flex bg-gradient-to-tr from-black via-gray-900 to-gray-800 text-white">
@@ -225,8 +238,8 @@ const Dashboard = () => {
                   </label>
                   <input
                     type="text"
-                    name="x"
-                    placeholder="https://x.com/username"
+                    name="x_username"
+                    placeholder="johndoe"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.x_username}
                     onChange={handleChange}
@@ -243,7 +256,7 @@ const Dashboard = () => {
                   <input
                     type="text"
                     name="discord"
-                    placeholder="https://discord.gg/username"
+                    placeholder="johndoe or johndoe#1234"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.discord}
                     onChange={handleChange}
@@ -260,7 +273,7 @@ const Dashboard = () => {
                   <input
                     type="text"
                     name="telegram"
-                    placeholder="https://t.me/username"
+                    placeholder="johndoe"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.telegram}
                     onChange={handleChange}
@@ -305,14 +318,14 @@ const Dashboard = () => {
                 </div>
                 <div className="relative py-4 mb-6 text-white">
                   <label
-                    htmlFor="tokenAbbreviation"
+                    htmlFor="ticker"
                     className="absolute top-0 left-4 px-1 bg-gray-800"
                   >
                     Token Abbreviation
                   </label>
                   <input
                     type="text"
-                    name="tokenAbbreviation"
+                    name="ticker"
                     placeholder="SOL"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.ticker}
@@ -321,14 +334,14 @@ const Dashboard = () => {
                 </div>
                 <div className="relative py-4 mb-6 text-white">
                   <label
-                    htmlFor="contractAddress"
+                    htmlFor="contract_address"
                     className="absolute top-0 left-4 px-1 bg-gray-800"
                   >
                     Contract Address
                   </label>
                   <input
                     type="text"
-                    name="contractAddress"
+                    name="contract_address"
                     placeholder="0x123......xxx"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.contract_address}
@@ -338,14 +351,14 @@ const Dashboard = () => {
 
                 <div className="relative py-4 mb-6 text-white">
                   <label
-                    htmlFor="tokenDescription"
+                    htmlFor="token_description"
                     className="absolute top-0 left-4 px-1 bg-gray-800"
                   >
                     Token Description
                   </label>
                   <textarea
                     type="text"
-                    name="tokenDescription"
+                    name="token_description"
                     placeholder="Token Description"
                     className="input focus:outline-none focus:ring-2 focus:ring-purple-500"
                     value={formData.token_description}

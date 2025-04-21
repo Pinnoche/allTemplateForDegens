@@ -79,10 +79,9 @@ export class DDataController {
     return await this.dDataService.uploadImages(files);
   }
 
-  @Delete('image/delete')
+  @Delete('image/delete/:files')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FilesInterceptor('files'))
-  async deleteImages(files: Array<Express.Multer.File>): Promise<any> {
+  async deleteImages(@Param('files') files: string): Promise<any> {
     return await this.dDataService.deleteImages(files);
   }
 

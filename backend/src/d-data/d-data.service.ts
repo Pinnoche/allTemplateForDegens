@@ -112,7 +112,7 @@ export class DDataService {
     return imageUrls.map((image) => image.Location);
   }
 
-  async deleteImages(files: Array<Express.Multer.File>) {
+  async deleteImages(files: string) {
     // const isValidId = mongoose.isValidObjectId(id);
     // if (!isValidId) {
     //   throw new NotAcceptableException();

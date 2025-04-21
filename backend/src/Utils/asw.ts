@@ -38,7 +38,8 @@ export async function uploadImagesToS3(files: Array<Express.Multer.File>) {
   });
 }
 
-export async function deleteImagesFromS3(files: Array<Express.Multer.File>) {
+export async function deleteImagesFromS3(image: string) {
+  console.log('Files to delete:', image);
   try {
     const s3 = new S3({
       accessKeyId: configs.AWS_ACCESS_KEY_ID,
@@ -47,9 +48,11 @@ export async function deleteImagesFromS3(files: Array<Express.Multer.File>) {
     const deleteParams = {
       Bucket: configs.AWS_BUCKET_NAME,
       Delete: {
-        Objects: files.map((image) => ({
-          Key: `degen/${image.filename}`,
-        })),
+        Objects: [
+          {
+            Key: `degen/${image}`,
+          },
+        ],
         Quiet: false,
       },
     };
