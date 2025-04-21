@@ -15,20 +15,23 @@ export class Data extends Document {
   @Prop({ unique: false })
   token_description: string;
 
+  @Prop({ unique: false })
+  tokenName: string;
+
   @Prop({ unique: true })
   x_username: string;
 
   @Prop({ unique: true })
-  telegram_channel: string;
+  telegram: string;
 
   @Prop({ unique: true })
   discord: string;
 
   @Prop()
-  icon: object[];
+  icon: string;
 
   @Prop()
-  banner: object[];
+  banner: string;
 
   @Prop({
     type: Types.ObjectId,

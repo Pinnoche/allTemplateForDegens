@@ -1,10 +1,12 @@
-// import { useSelector } from "react-redux";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Style.css";
 import axios from "../../axios";
-// import { toast } from "sonner";
-// import { getErrorMessge } from "../../Utils/Helper";
+import { toast } from "sonner";
+import { getErrorMessge } from "../../Utils/Helper";
+import { useSelector } from "react-redux";
 const Dashboard = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [dataId, setDataId] = useState(null);
   const [activeSlide, setActiveSlide] = useState(null);
   const [sectionTitle, setSectionTitle] = useState("Dashboard");
   const [scaling, setScaling] = useState(false);
@@ -12,9 +14,10 @@ const Dashboard = () => {
   const [selectedIconName, setSelectedIconName] = useState(null);
   const [selectedBannerName, setSelectedBannerName] = useState(null);
   const [selectedBanner, setSelectedBanner] = useState(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isImageUploading, setIsImageUploading] = useState(false);
+  // const [uploadProgress, setUploadProgress] = useState(0);
+  // const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [formData, setFormData] = useState({
     x_username: "",
     discord: "",
@@ -26,11 +29,35 @@ const Dashboard = () => {
     icon: "",
     banner: "",
   });
+
+  const fetchData = async () => {
+    const data = await axios.get(`/data/${user.id}`);
+    if (data) {
+      setFormData(data.data);
+      setDataId(data.data._id);
+      setSelectedIconName(
+        data.data.icon.replace(
+          "https://degen-app-images.s3.amazonaws.com/degen/",
+          ""
+        )
+      );
+      setSelectedBannerName(
+        data.data.banner.replace(
+          "https://degen-app-images.s3.amazonaws.com/degen/",
+          ""
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const iconRef = useRef(null);
   const bannerRef = useRef(null);
 
   const handleChange = (e) => {
-    console.log("Value", e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -41,25 +68,24 @@ const Dashboard = () => {
     }
     const url = URL.createObjectURL(file);
     if (type === "icon") {
-      await uploadImage(file, type);
-      setSelectedIcon(url);
-      setSelectedIconName(file.name);
+      const image = await uploadImage(file, type);
+      if (image) {
+        setSelectedIcon(url);
+        setSelectedIconName(file.name);
+      }
     } else if (type === "banner") {
-      await uploadImage(file, type);
-      setSelectedBanner(url);
-      setSelectedBannerName(file.name);
+      const image = await uploadImage(file, type);
+      if (image) {
+        setSelectedBanner(url);
+        setSelectedBannerName(file.name);
+      }
     }
-    // else if (type === "secondaryImage2") {
-    //   setFormData({ ...formData, secondaryImage2: file });
-    // }
-
-    // setFormData({ ...formData, [field]: e.target.files[0] });
   };
 
   const uploadImage = async (file, type) => {
-    setIsImageUploading(true);
-    setUploadProgress(0);
-    setIsImageUploaded(false);
+    // setIsImageUploading(true);
+    // setUploadProgress(0);
+    // setIsImageUploaded(false);
     try {
       const formData = new FormData();
       formData.append("files", file);
@@ -67,17 +93,15 @@ const Dashboard = () => {
       const response = await axios.post("/data/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          // Authorization: `Bearer ${token}`, // Uncomment if using JWT guard
         },
-        onUploadProgress: (ProgressEvent) => {
-          const { loaded, total } = ProgressEvent;
-          const percent = Math.floor((loaded * 100) / total);
-          setUploadProgress(percent);
-        },
+        // onUploadProgress: (ProgressEvent) => {
+        //   const { loaded, total } = ProgressEvent;
+        //   const percent = Math.floor((loaded * 100) / total);
+        //   setUploadProgress(percent);
+        // },
       });
-      setIsImageUploading(false);
-      setIsImageUploaded(true);
-      console.log("FIleUrl: ", response.data[0]);
+      // setIsImageUploading(false);
+      // setIsImageUploaded(true);
       const fileUrl = response.data[0];
       setFormData((prev) => ({
         ...prev,
@@ -113,12 +137,7 @@ const Dashboard = () => {
 
   const removeImage = async (files) => {
     try {
-      const response = await axios.delete(
-        `/data/image/delete/${files}`
-        // headers: {
-        //   // Authorization: `Bearer ${token}`, // Uncomment if using JWT guard
-        // }
-      );
+      const response = await axios.delete(`/data/image/delete/${files}`);
       console.log("Deleted Files: ", response.data);
     } catch (error) {
       console.error("Delete failed:", error.response?.data || error.message);
@@ -127,15 +146,33 @@ const Dashboard = () => {
   };
 
   const handleNext = () => setActiveSlide((prev) => prev + 1);
+
   const handleBack = () => {
     setActiveSlide((prev) => (prev > 1 ? prev - 1 : 1));
   };
   const handleSkip = () => {
     setActiveSlide((prev) => (prev < 3 ? prev + 1 : 3));
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+    setIsSubmitting(true);
+    try {
+      if (formData.userId) {
+        const newData = { ...formData };
+        delete newData.userId;
+        await axios.patch(`/data/${dataId}`, newData);
+      } else {
+        await axios.post("/data", formData);
+      }
+      toast.success("Data Uploaded Successfully");
+      setIsSubmitting(false);
+    } catch (error) {
+      console.log(error);
+      const mssg = getErrorMessge(error);
+      toast.error(mssg);
+      setIsSubmitting(false);
+    }
   };
 
   const progressPercentage = activeSlide !== 0 ? (activeSlide / 3) * 100 : 0;
@@ -174,7 +211,6 @@ const Dashboard = () => {
 
       <div className="flex-1 pt-16 ml-[20%] px-10">
         {activeSlide === null ? (
-          // Dashboard
           <div>
             <div className="flex flex-col justify-start px-10">
               <h1 className="text-white font-bold text-2xl">
@@ -395,10 +431,10 @@ const Dashboard = () => {
                     Icon
                   </label>
                   <div>
-                    {selectedIcon ? (
+                    {formData?.icon || selectedIcon ? (
                       <div className="flex items-center justify-between">
                         <img
-                          src={selectedIcon}
+                          src={formData?.icon ?? selectedIcon}
                           alt="icon"
                           className="h-12 w-12 object-cover rounded-full border border-gray-600 p-2 "
                         />
@@ -439,10 +475,10 @@ const Dashboard = () => {
                   >
                     Banner
                   </label>
-                  {selectedBanner ? (
+                  {formData.banner || selectedBanner ? (
                     <div className="flex items-center justify-between">
                       <img
-                        src={selectedBanner}
+                        src={formData.banner ?? selectedBanner}
                         alt="icon"
                         className="h-12 w-12 object-cover rounded-md border border-gray-600 p-2 "
                       />
@@ -490,10 +526,13 @@ const Dashboard = () => {
                   />
                 </div> */}
                 <button
-                  className="bg-purple-800 px-4 py-2 rounded hover:bg-purple-600 items-end scale"
+                  className={`bg-purple-800 px-4 py-2 rounded hover:bg-purple-600 items-end scale ${
+                    isSubmitting && "bg-purple-300"
+                  }`}
                   onClick={handleSubmit}
+                  disabled={isSubmitting}
                 >
-                  Submit
+                  {isSubmitting ? "Processing..." : "Submit"}
                 </button>
               </>
             )}

@@ -50,17 +50,15 @@ export class AuthController {
   @Get('profile')
   @UseGuards(AuthGuard())
   async profile(@Req() req) {
-    console.log('User Data:', req.user); // Debugging
-
     if (!req.user) {
       throw new UnauthorizedException('User not found');
     }
-
     //  Return only necessary fields
     const user = {
       id: req.user._id,
       email: req.user.email,
       degen_name: req.user.degen_name,
+      token: req.cookies?.token.token,
     };
     return user;
   }

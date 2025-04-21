@@ -24,12 +24,13 @@ function Login() {
         setIsLoading(false);
         return;
       }
-      await axios.post("/auth/login", {
+      const res = await axios.post("/auth/login", {
         email: email,
         password: password,
       });
+      console.log("Token?: ", res.data);
       dispatch(getUser());
-      toast.success("Login successful!");
+      toast.success(res.data.message);
       setEmail("");
       setPassword("");
       setVisibility(false);

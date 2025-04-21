@@ -58,7 +58,9 @@ export class DDataService {
     if (!isValidId) {
       throw new NotAcceptableException();
     }
-    const data = await this.dataModel.findById(id);
+    const data = await this.dataModel.findOne({
+      userId: new mongoose.Types.ObjectId(id),
+    });
     if (!data) {
       throw new NotFoundException('Data not Available');
     }
@@ -72,8 +74,8 @@ export class DDataService {
     }
     const data = await this.dataModel.findByIdAndUpdate(
       id,
-      { updateDDatumDto },
-      { new: true },
+      { ...updateDDatumDto },
+      { new: true, runValidators: true },
     );
     if (!data) {
       throw new NotFoundException('Data not available');

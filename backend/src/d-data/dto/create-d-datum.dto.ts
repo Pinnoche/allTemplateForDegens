@@ -10,6 +10,10 @@ export class CreateDDatumDto {
 
   @IsNotEmpty()
   @IsString()
+  tokenName: string;
+
+  @IsNotEmpty()
+  @IsString()
   token_description: string;
 
   @IsNotEmpty()
@@ -25,10 +29,10 @@ export class CreateDDatumDto {
   discord: string;
 
   @IsNotEmpty()
-  icon: object[];
+  icon: string;
 
   @IsNotEmpty()
-  banner: object[];
+  banner: string;
 
   @IsEmpty()
   userId: User;

@@ -46,6 +46,7 @@ export class DDataController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   async getDataById(@Param('id') id: string) {
     return this.dDataService.getData(id);
   }
@@ -57,7 +58,7 @@ export class DDataController {
   }
 
   @Post('upload')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FilesInterceptor('files'))
   async uploadImages(
     // @Param('id') id: string,
@@ -67,8 +68,8 @@ export class DDataController {
           fileType: /(jpg|jpeg|png)$/,
         })
         .addMaxSizeValidator({
-          maxSize: 1000 * 1024,
-          message: 'File size must be less than 1MB',
+          maxSize: 1000 * 5024,
+          message: 'File size must be less than 5MB',
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,

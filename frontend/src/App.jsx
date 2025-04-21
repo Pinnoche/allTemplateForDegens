@@ -45,11 +45,13 @@ function App() {
         <Toaster
           duration={5000}
           position="top-center"
-          z-index= {100}
+          z-index={100}
           // closeButton={true}
           // expand
           icons={{
             success: <LottiePlay />,
+            info: <LottiePlay />,
+            error: <LottiePlay />,
           }}
           toastOptions={{
             unstyled: true,
