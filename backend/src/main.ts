@@ -7,13 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: true,
     credentials: true,
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   await app
-    .listen(process.env.PORT ?? 3000)
+    .listen(process.env.PORT ?? 8000)
     .then(() => console.log(`Connected via PORT ${process.env.PORT}`));
 }
 bootstrap();

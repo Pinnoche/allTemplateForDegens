@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -8,7 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
-// import { verifySubdomain } from './verifySubdomain';
+import { verifySubdomain } from './verifySubdomain';
 // import { UsersController } from './users/users.controller';
 // import { DDataController } from './d-data/d-data.controller';
 import { Reserved_Subdomain } from './reserved-subdomain';
@@ -41,9 +46,12 @@ import { RoleFactory } from './roles/roles.factory';
   controllers: [AppController],
   providers: [AppService, Reserved_Subdomain, RoleFactory],
 })
-// export class AppModule implements NestModule {
-// configure(consumer: MiddlewareConsumer) {
-//   consumer.apply(verifySubdomain).forRoutes(DDataController);
-// }
-// }
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(verifySubdomain).forRoutes({
+      path: 'data/subdomain',
+      method: RequestMethod.GET,
+    });
+  }
+}
+// export class AppModule {}

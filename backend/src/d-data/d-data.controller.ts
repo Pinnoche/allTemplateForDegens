@@ -40,7 +40,7 @@ export class DDataController {
     return this.dDataService.getDatum();
   }
 
-  @Get()
+  @Get('/subdomain')
   async getDataBySubdomain(@Req() req): Promise<any> {
     return await this.dDataService.getBySubdomain(req.user);
   }

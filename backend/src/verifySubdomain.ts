@@ -1,8 +1,9 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NestMiddleware,
-  UnauthorizedException,
+  // UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
@@ -18,34 +19,34 @@ export class verifySubdomain implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const subdomain = req.subdomains[0] || 'app';
-    console.log('Subdomain:', req.subdomains);
+    const rawSubdomain = req.headers['client-subdomain'];
+    const subdomain = rawSubdomain.toString();
     // default subdomain to app if not found
     // if (!subdomain) {
     //   req.subdomains[0] = 'app';
     //   console.log(req.subdomains[0]);
     //   return next();
     // }
-    if (this.reserved_subdomain.subdomains.includes(subdomain)) {
-      console.log('Reserved subdomain:', subdomain);
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res
-          .status(401)
-          .json({ message: 'Unathorized: Please login first ' });
-      }
-      const token = authHeader.split(' ')[1];
-      try {
-        const decoded_token = await this.jwtService.verifyAsync(token);
-        req.user = decoded_token;
-        return next();
-      } catch (error) {
-        throw new UnauthorizedException(
-          'Unauthorized: Invalid Token or Expired Token',
-          error,
-        );
-      }
-    }
+    // if (this.reserved_subdomain.subdomains.includes(subdomain)) {
+    //   console.log('Reserved subdomain:', subdomain);
+    //   const authHeader = req.headers.authorization;
+    //   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    //     return res
+    //       .status(401)
+    //       .json({ message: 'Unathorized: Please login first ' });
+    //   }
+    //   const token = authHeader.split(' ')[1];
+    //   try {
+    //     const decoded_token = await this.jwtService.verifyAsync(token);
+    //     req.user = decoded_token;
+    //     return next();
+    //   } catch (error) {
+    //     throw new UnauthorizedException(
+    //       'Unauthorized: Invalid Token or Expired Token',
+    //       error,
+    //     );
+    //   }
+    // }
     try {
       const public_subdomain =
         await this.usersService.getUserBySubdomain(subdomain);
@@ -55,7 +56,7 @@ export class verifySubdomain implements NestMiddleware {
       return next();
     } catch (error) {
       console.log('Error:', error);
-      return res.status(500).json({ message: 'Internal Server error' });
+      throw new InternalServerErrorException(error);
     }
   }
 }
