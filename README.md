@@ -32,7 +32,7 @@ npm install
 npm run dev
 ```
 
-```markdown
+
 ## 🧠 Lessons Learned
 
 Explored modular architecture across fullstack systems and dynamic frontend integration.
@@ -43,7 +43,7 @@ DMJ (pinnoche)
 
 GitHub: [[https://github.com/pinnoche]] @pinnoche
 
-LinkedIn: [[Your LinkedIn URL]](https://linkedin.com/in/pinnoche)
+LinkedIn: (https://linkedin.com/in/pinnoche)
 
 ## 🪪 License
 
